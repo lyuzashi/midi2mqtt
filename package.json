@@ -1,0 +1,9 @@
+{
+  "name": "midi2mqtt",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "midi": "^2.0.0",
+    "yamljs": "^0.3.0"
+  }
+}

@@ -1,0 +1,35 @@
+controller: WORLDE easy control
+status:
+  bank:
+    status: 240
+    dataValue: 8
+    id: null
+  note:
+    status: 176
+    dataValue: 1
+    id: 0
+keys:
+  - name: Slider 1
+    type: slider
+    value: 3
+  - name: Slider 2
+    type: slider
+    value: 4
+  - name: Slider 3
+    type: slider
+    value: 5
+  - name: Button 1
+    type: button
+    value: 23
+banks:
+  - value: 0
+    name: Lighting
+    notes:
+      - key: Slider 1
+        topic: midi/status/easycontrol/slider_1
+      - key: Button 1
+        topic: lights/set/Desk lamp/brightness
+      - key: Slider 2
+        topic: midi/status/easycontrol/slider_2
+      - key: Slider 3
+        topic: midi/status/easycontrol/slider_3
