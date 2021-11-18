@@ -9,27 +9,34 @@ status:
     dataValue: 1
     id: 0
 keys:
-  - name: Slider 1
-    type: slider
-    value: 3
-  - name: Slider 2
-    type: slider
-    value: 4
-  - name: Slider 3
-    type: slider
-    value: 5
-  - name: Button 1
-    type: button
-    value: 23
+  - name: ab
+    value: 9
+  - name: repeat
+    value: 49
+  - name: rewind
+    value: 47
+  - name: fast forward
+    value: 48
+  - name: stop
+    value: 46
+  - name: play
+    value: 45
+  - name: record
+    value: 44
+  - name: back
+    value: 1
+  - name: forward
+    value: 2
+  - name: jog down
+    value: 67
+  - name: jog up
+    value: 64
 banks:
   - value: 0
-    name: Lighting
-    notes:
-      - key: Slider 1
-        topic: midi/status/easycontrol/slider_1
-      - key: Button 1
-        topic: lights/set/Desk lamp/brightness
-      - key: Slider 2
-        topic: midi/status/easycontrol/slider_2
-      - key: Slider 3
-        topic: midi/status/easycontrol/slider_3
+    name: bank 1
+  - value: 1
+    name: bank 2
+  - value: 2
+    name: bank 3
+  - value: 3
+    name: bank 4

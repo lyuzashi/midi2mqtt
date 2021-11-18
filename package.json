@@ -4,6 +4,8 @@
   "type": "module",
   "dependencies": {
     "midi": "^2.0.0",
+    "mqtt": "^4.2.8",
+    "mqtt-pattern": "^1.2.0",
     "yamljs": "^0.3.0"
   }
 }
