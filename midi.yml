@@ -1,4 +1,6 @@
 controller: WORLDE easy control
+model: Easy Control 9
+manufacturer: Worlde
 status:
   bank:
     status: 240

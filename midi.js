@@ -23,27 +23,29 @@ const node_id = clean(device);
 
 const lastValues = new WeakMap;
 
-const discover = (note) => {
+const discover = (note, bank) => {
+  const name = `${bank.name} ${note.name}`;
+  const model = config.model;
+  const manufacturer = config.manufacturer;
+  const unique_id = clean(`${manufacturer} ${model} ${name}`);
   const topic = pattern.fill(discoveryTemplate, {
     discovery_prefix,
     component,
     node_id,
-    object_id: clean(note.name),
+    object_id: clean(name),
   });
   client.publish(topic, JSON.stringify({
-    state_topic: pattern.fill(topicTemplate, { device, control: note.name, bank: 'Bank 1' }),
-    min: 0,
-    max: 256,
-    name: note.name,
-    unique_id: ''
+    state_topic: pattern.fill(topicTemplate, { device, control: note.name, bank: bank.name }),
+    name,
+    unique_id,
     device: {
-      identifiers: '',
-      name: '',
-      model: '',
-      manufacture: '',
+      identifiers: [unique_id],
+      name,
+      model,
+      manufacturer,
     },
   }), {
-    retain: true
+    // retain: true
   });
 };
 
@@ -71,7 +73,7 @@ const keyTypes = {
   },
 }
 
-const keyTypeMap = Object.getOwnPropertySymbols(keyTypes).reduce((map, key) => Object.assign(map, 
+const createKeyTypeMap = () => Object.getOwnPropertySymbols(keyTypes).reduce((map, key) => Object.assign(map, 
   keyTypes[key].notes.reduce((keys, id, number) => Object.assign(keys, { [id]: {
     type: key,
     mapper: keyTypes[key].mapper,
@@ -88,10 +90,6 @@ if(port >= 0) {
   console.log(`Opened port ${port}`);
 }
 
-client.on('connect', () => {
-  console.log('connected');
-  discover(keyTypeMap[3]);
-});
 
 const status = Object.keys(config.status).reduce((status, type) =>
   Object.assign(status, { [config.status[type].status]: { ...config.status[type], type } }), {});
@@ -100,15 +98,24 @@ const banks = Object.keys(config.banks).reduce((banks, index) =>
   Object.assign(banks, {
     [config.banks[index].value]: {
       ...config.banks[index],
-      notes: config.banks[index].notes && Object.keys(config.banks[index].notes).reduce((notes, indexN) => 
+      notes: createKeyTypeMap(),
+      /*config.banks[index].notes && Object.keys(config.banks[index].notes).reduce((notes, indexN) => 
         Object.assign(notes, {
           [config.keys.find(key => key.name === config.banks[index].notes[indexN].key).value]: {
             ...config.keys.find(key => key.name === config.banks[index].notes[indexN].key),
             ...config.banks[index].notes[indexN],
           }
-        }), {}),
+        }), {}), */
     }
   }), {});
+
+
+  client.on('connect', () => {
+    console.log('connected');
+    Object.values(banks).forEach(bank =>
+      Object.values(bank.notes).forEach(note => discover(note, bank)))
+  });
+  
 
 let bank = banks[0]; // No way to retrieve bank on start, but assume known state
 
@@ -125,8 +132,9 @@ input.on('message', (deltaTime, [statusNumber, ...data]) => {
     break;
     case 'note':
       if (!bank) break;
-      const note = keyTypeMap[key];
+      const note = bank.notes[key];
       if (!note) break;
+      const lastValue = lastValues.get(note);
       const publishValue = note.mapper ? note.mapper(value, note) : value;
       // TODO use zero-crossing logic between banks and at startup. Sliders/knobs should not send 
       // messages until they have returned to their previously published state to avoid jumps.
